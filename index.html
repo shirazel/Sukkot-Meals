@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>סידור ארוחות, סוכות תשפ"ז</title>
+<title>סידור ארוחות, ראש השנה תשפ"ז</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500;700;900&family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -235,6 +235,8 @@
   }
   .icon-btn svg{width:15px;height:15px;display:block;}
   .icon-btn:hover{background:#F1E6C8;color:var(--pomegranate);}
+  .icon-btn:disabled{opacity:0.3;cursor:default;}
+  .icon-btn:disabled:hover{background:none;color:var(--ink-soft);}
   input.qty-input{
     width:44px;
     flex:0 0 auto;
@@ -447,7 +449,7 @@
 <body>
 <div class="wrap">
   <header>
-    <h1>סוכות תשפ"ז</h1>
+    <h1>ראש השנה תשפ"ז</h1>
     <p class="subtitle">סידור ארוחות, מי מביא מה לחג</p>
     <div class="user-bar" id="userBar"></div>
   </header>
@@ -476,20 +478,27 @@
 <script>
 (function(){
   // כתובת ה-Web App של Google Apps Script, יש להדביק כאן אחרי הפריסה
-  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwndQBJpd45Tv8twx8fDwTQJvhrE3C9keMOj58PCPUswjBdVkRaAJkedWmsuxxZNr5L/exec';
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz8jwTb9DOLoZjjzCxj-eTNo_C39U6yASIhtfnf29X13XW7ELvOg4vSE0Zu18bJK4qlTw/exec';
 
   const DEFAULT_DATA = {
     categories: [
-      { id:'erev-sukkot', title:'ערב סוכות', items:[
-        'סלט גזר','מרק עוף','אטריות','עוף','עוף בתנור','אורז לבן, קוסקוס או תפוח אדמה',
-        'רסק תפוחי עץ','חסה ועגבניות','גזר','מרק כתום','מרק ירקות','סלומון','מושט',
-        'כרוב ממולא','כרובית וברוקולי','עוגת גבינה','גלידוניות'
+      { id:'erev-a', title:'ערב יום א׳ (שבת)', items:[
+        'תפוח בדבש','תמרים','רימונים','חסה','סלק','סלט גזר','מרק עוף','אטריות',
+        'עוף','עוף בתנור','אורז לבן, קוסקוס או תפוח אדמה','קיש כרישה','רסק תפוחי עץ'
       ]},
-      { id:'boker-sukkot', title:'בוקר סוכות', items:[
+      { id:'boker-a', title:'בוקר יום א׳ (שבת)', items:[
         'מטבוחה','פלפלים','חצילים','פסטו','טחינה','סלט חסה ופירות','סלט כרוב',
-        'סלט קשים','חמין','שניצלים','עוף','אורז','שעועית','נקטר מנגו','זיתים',
-        'סלט חסה','מרק קוסקוס','קוסקוס','צלי בשר','קציצות בשר ועוף','תפוח אדמה מבושל',
-        'רסק תפוחי עץ'
+        'סלט קשים','חמין','שניצלים','עוף','אורז','שעועית','אורז','נקטר מנגו'
+      ]},
+      { id:'erev-b', title:'ערב יום ב׳', items:[
+        'שהחיינו על תמרים','תפוח בדבש','רימונים','חסה ועגבניות','סלק','גזר',
+        'מרק כתום','מרק ירקות','סלומון','מושט','כרוב ממולא','כרובית וברוקולי',
+        'עוגת גבינה','גלידוניות'
+      ]},
+      { id:'boker-b', title:'בוקר יום ב׳', items:[
+        'מטבוחה','פלפלים','חצילים','פסטו','טחינה','זיתים','סלט כרוב','סלט חסה',
+        'מרק קוסקוס','קוסקוס','צלי בשר','קציצות בשר ועוף','שניצלים',
+        'תפוח אדמה מבושל','רסק תפוחי עץ'
       ]},
       { id:'cakes', title:'עוגות', hasQuantity:true, items:[
         'חלות','עוגות דבש','עוגת גבינה','כדורי תמרים','עוגיות','עוגת תפוחים','עוגת שמרים'
@@ -712,7 +721,8 @@
   const accentByIndex = ['var(--pomegranate)','var(--honey-dark)','var(--olive)','var(--pomegranate)','var(--honey-dark)'];
 
   const GROUPS = [
-    { title:'חג סוכות', catIds:['erev-sukkot','boker-sukkot'] },
+    { title:'יום ראשון', catIds:['erev-a','boker-a'] },
+    { title:'יום שני', catIds:['erev-b','boker-b'] },
     { title:'עוגות', catIds:['cakes'] }
   ];
 
@@ -751,7 +761,7 @@
         card.appendChild(hint);
       }
 
-      cat.items.forEach(item => {
+      cat.items.forEach((item, itemIdx) => {
         const li = document.createElement('li');
         li.className = 'food';
 
@@ -822,6 +832,36 @@
         const actionsWrap = document.createElement('div');
         actionsWrap.className = 'actions-wrap';
 
+        const upBtn = document.createElement('button');
+        upBtn.className = 'icon-btn';
+        upBtn.type = 'button';
+        upBtn.title = 'הזזה למעלה';
+        upBtn.disabled = itemIdx === 0;
+        upBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"></path><path d="M6 11l6-6 6 6"></path></svg>';
+        upBtn.onclick = async () => {
+          if(itemIdx === 0) return;
+          const tmp = cat.items[itemIdx - 1];
+          cat.items[itemIdx - 1] = cat.items[itemIdx];
+          cat.items[itemIdx] = tmp;
+          await saveData(true);
+          renderBoard();
+        };
+
+        const downBtn = document.createElement('button');
+        downBtn.className = 'icon-btn';
+        downBtn.type = 'button';
+        downBtn.title = 'הזזה למטה';
+        downBtn.disabled = itemIdx === cat.items.length - 1;
+        downBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"></path><path d="M18 13l-6 6-6-6"></path></svg>';
+        downBtn.onclick = async () => {
+          if(itemIdx === cat.items.length - 1) return;
+          const tmp = cat.items[itemIdx + 1];
+          cat.items[itemIdx + 1] = cat.items[itemIdx];
+          cat.items[itemIdx] = tmp;
+          await saveData(true);
+          renderBoard();
+        };
+
         const dupBtn = document.createElement('button');
         dupBtn.className = 'icon-btn';
         dupBtn.type = 'button';
@@ -846,6 +886,8 @@
           renderBoard();
         };
 
+        actionsWrap.appendChild(upBtn);
+        actionsWrap.appendChild(downBtn);
         actionsWrap.appendChild(dupBtn);
         actionsWrap.appendChild(delBtn);
 
@@ -1034,7 +1076,7 @@
     ctx.textAlign = 'center';
     ctx.textBaseline = 'alphabetic';
     ctx.font = '700 30px Rubik, Arial, sans-serif';
-    ctx.fillText('סוכות תשפ"ז', width / 2, 55);
+    ctx.fillText('ראש השנה תשפ"ז', width / 2, 55);
     ctx.font = '600 22px Rubik, Arial, sans-serif';
     ctx.fillStyle = '#2B2318';
     ctx.fillText('מה ' + name + ' צריך/ה להביא', width / 2, 95);
@@ -1071,7 +1113,7 @@
     ctx.textAlign = 'center';
     ctx.fillStyle = '#8A7A5C';
     ctx.font = '400 13px Rubik, Arial, sans-serif';
-    ctx.fillText('סידור ארוחות לסוכות', width / 2, height - 18);
+    ctx.fillText('סידור ארוחות לראש השנה', width / 2, height - 18);
 
     canvas.toBlob((blob) => {
       if(!blob) return;
@@ -1095,14 +1137,12 @@
         const item = cat.items[r];
         const nameText = item ? (item.qty ? escapeHtml(item.name) + ' (' + escapeHtml(item.qty) + ')' : escapeHtml(item.name)) : '';
         rows += '<td style="padding:6px 10px;border:1px solid #ccc;font-size:12pt;">' + nameText + '</td>';
-        rows += '<td style="padding:6px 10px;border:1px solid #ccc;color:#555;font-size:12pt;">' + (item && item.who ? escapeHtml(item.who) : '') + '</td>';
       });
       rows += '</tr>';
     }
     let headerRow = '<tr>';
     cats.forEach(cat => {
       headerRow += '<th style="padding:8px 10px;border:1px solid #ccc;background:#f3e6c8;font-size:12pt;">' + escapeHtml(cat.title) + '</th>';
-      headerRow += '<th style="padding:8px 10px;border:1px solid #ccc;background:#f3e6c8;font-size:12pt;">מי מביא</th>';
     });
     headerRow += '</tr>';
 
@@ -1139,10 +1179,10 @@
 
     return (
       '<div style="font-family:Arial, sans-serif; direction:rtl; text-align:right;">' +
-      '<h2 style="color:#7C1F2E;font-size:14pt;">תפריט סוכות תשפ"ז, סידור ארוחות ומי מביא מה</h2>' +
+      '<h2 style="color:#7C1F2E;font-size:14pt;">תפריט ראש השנה תשפ"ז, סידור ארוחות ומי מביא מה</h2>' +
       '<p style="color:#777;font-size:12pt;">הופק בתאריך ' + dateStr + '</p>' +
       sections +
-      '<p style="margin-top:24px;font-size:12pt;">חג סוכות שמח, מועדים לשמחה!</p>' +
+      '<p style="margin-top:24px;font-size:12pt;">בעז"ה שיהיה בהצלחה, שנה טובה ומתוקה, כתיבה וחתימה טובה, בשורות טובות וישועות גדולות לעם ישראל.</p>' +
       '</div>'
     );
   }
@@ -1155,7 +1195,7 @@
     const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' " +
       "xmlns:w='urn:schemas-microsoft-com:office:word' " +
       "xmlns='http://www.w3.org/TR/REC-html40'>" +
-      "<head><meta charset='utf-8'><title>תפריט סוכות תשפז</title></head><body>";
+      "<head><meta charset='utf-8'><title>תפריט ראש השנה תשפז</title></head><body>";
     const footer = "</body></html>";
     const sourceHTML = header + content + footer;
 
@@ -1163,7 +1203,7 @@
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'תפריט סוכות תשפז.doc';
+    a.download = 'תפריט ראש השנה תשפז.doc';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
